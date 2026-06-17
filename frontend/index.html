@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Harbor — reserve anything on-chain</title>
+    <!-- The proven Thebes SDK (window.EgyptBoundary): /api/call + /api/query +
+         /api/receipt, Candid encode/decode, persisted browser identity. Vendored
+         so the example is self-contained; served from the same /_/raw/{cid}/ prefix. -->
+    <script src="./boundary.js"></script>
+    <!-- Memphis passkey auth client (window.MemphisPasskey) -->
+    <script src="./passkey.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
