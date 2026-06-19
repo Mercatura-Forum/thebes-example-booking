@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { SignOutChip } from '@thebes/sdk'
+import { SignOutChip } from './MemphisGate'
 
 const tabs = [
   { to: '/', label: 'Browse', end: true },
