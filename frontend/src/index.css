@@ -3,10 +3,10 @@
 @import '@fontsource-variable/sora';
 
 /* ── Harbor (reservations) design tokens ──
-   Reserve anything — a boat, a car, a studio, an appointment. An airy,
-   leisure/travel feel distinct from the other examples and from the AI-default
-   clusters: cool mint-white paper, deep teal ink, a teal action accent, and a
-   warm amber reserved for price (the 2-tone). Photo-forward listings carry it. */
+   Reserve anything — a boat, a car, a studio, a court. An airy, leisure/travel
+   feel distinct from the other examples: cool mint-white paper, deep teal ink,
+   a luminous teal accent, warm amber reserved for money (the 2-tone). The
+   signature is the Tide Clock — the week's live availability as a tide chart. */
 @theme {
   --color-accent: #0f8a82;  /* Memphis sign-in accent (alias of primary) */
   --color-ink: #0c2f2c;        /* deep teal-ink text */
@@ -16,7 +16,7 @@
   --color-line: #dde8e6;       /* hairlines */
   --color-teal: #0f8a82;       /* action accent */
   --color-teal-ink: #0a5c56;
-  --color-amber: #b45309;      /* PRICE / value only */
+  --color-amber: #b45309;      /* MONEY / value only */
   --color-amber-bg: #fbf0df;
   --color-busy: #b42318;       /* taken / unavailable */
 
@@ -24,16 +24,32 @@
   --font-sans: ui-sans-serif, system-ui, -apple-system, sans-serif;
 }
 
+/* Night harbor: same hue family, inverted depth. Toggled by <html class="dark">. */
+html.dark {
+  --color-ink: #dcece9;
+  --color-ink-soft: #8fa9a5;
+  --color-paper: #0b1a18;
+  --color-surface: #10241f;
+  --color-line: #1e3833;
+  --color-teal: #40d4c7;
+  --color-teal-ink: #7ce8dd;
+  --color-amber: #ffc457;
+  --color-amber-bg: #33270f;
+  --color-busy: #ff8d80;
+  color-scheme: dark;
+}
+
 html, body, #root { height: 100%; }
 body {
   margin: 0; background: var(--color-paper); color: var(--color-ink);
   font-family: var(--font-sans); -webkit-font-smoothing: antialiased;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 .font-display { font-family: var(--font-display); letter-spacing: -0.02em; }
 .nums { font-variant-numeric: tabular-nums; }
 .card { background: var(--color-surface); border: 1px solid var(--color-line); border-radius: 16px; }
 
-/* Price pill (the value 2-tone) — amber, tabular. */
+/* Money pill (the value 2-tone) — amber, tabular. */
 .price { display: inline-flex; align-items: baseline; gap: 0.15rem; border-radius: 9999px;
   background: var(--color-amber-bg); color: var(--color-amber); padding: 0.15rem 0.6rem;
   font-family: var(--font-display); font-variant-numeric: tabular-nums; font-weight: 700; }
@@ -42,6 +58,48 @@ body {
 .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .media img[data-loaded='false'] { filter: blur(10px); transform: scale(1.04); }
 .media img { transition: filter .35s ease, transform .35s ease; }
+
+/* ── The hero ── */
+.hero {
+  position: relative; overflow: hidden; border-radius: 24px;
+  border: 1px solid var(--color-line);
+  background:
+    radial-gradient(1100px 480px at 82% 30%, color-mix(in oklab, var(--color-teal) 12%, transparent), transparent 60%),
+    linear-gradient(160deg, var(--color-surface), color-mix(in oklab, var(--color-teal) 5%, var(--color-surface)));
+}
+.hero-kicker { display: inline-flex; align-items: center; gap: 0.45rem;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--color-teal-ink); }
+.hero-kicker::before { content: ''; display: inline-block; width: 22px; height: 1.5px;
+  background: var(--color-teal); }
+
+/* Occupancy meter on listing cards: how deep the water already is. */
+.tidebar { position: relative; height: 4px; border-radius: 9999px; overflow: hidden;
+  background: color-mix(in oklab, var(--color-teal) 14%, transparent); }
+.tidebar > span { position: absolute; inset: 0 auto 0 0; border-radius: 9999px;
+  background: var(--color-teal); }
+
+/* Slot chips */
+.slot-chip { border: 1px solid var(--color-line); background: var(--color-surface);
+  border-radius: 12px; padding: 0.5rem 0.75rem; text-align: left;
+  transition: border-color .15s ease, transform .15s ease, box-shadow .15s ease; cursor: pointer; }
+.slot-chip:hover:not(:disabled) { border-color: var(--color-teal); transform: translateY(-1px);
+  box-shadow: 0 8px 18px -12px color-mix(in oklab, var(--color-teal) 60%, transparent); }
+.slot-chip[data-selected='true'] { border-color: var(--color-teal);
+  box-shadow: 0 0 0 1.5px var(--color-teal) inset; }
+.slot-chip:disabled { cursor: default; opacity: 0.85; }
+
+/* Seat dots inside a slot chip: filled = taken. */
+.seat-dot { display: inline-block; width: 5px; height: 5px; border-radius: 9999px; }
+
+/* Status chips share one vocabulary everywhere. */
+.status-chip { display: inline-flex; align-items: center; gap: 0.3rem; border-radius: 9999px;
+  padding: 0.15rem 0.65rem; font-size: 11px; font-weight: 700; }
+.status-confirmed { background: color-mix(in oklab, var(--color-teal) 12%, transparent); color: var(--color-teal-ink); }
+.status-checked-in { background: color-mix(in oklab, #3565a8 14%, transparent); color: color-mix(in oklab, #3565a8 80%, var(--color-ink)); }
+.status-completed { background: color-mix(in oklab, var(--color-ink) 10%, transparent); color: var(--color-ink-soft); }
+.status-cancelled { background: color-mix(in oklab, var(--color-busy) 10%, transparent); color: var(--color-busy); }
+.status-no-show { background: color-mix(in oklab, var(--color-amber) 14%, transparent); color: var(--color-amber); }
 
 :focus-visible { outline: 2px solid var(--color-teal); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }

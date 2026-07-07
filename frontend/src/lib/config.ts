@@ -20,9 +20,13 @@ export function fmtCents(cents: bigint | number): string {
   return `${whole}.${frac}`
 }
 
-/** A slot start (ns) → "Sat, Apr 5 · 14:30". */
-export function slotTime(ns: bigint): string {
-  const d = new Date(Number(ns / 1_000_000n))
-  return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })
-    + ' · ' + d.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })
+/** Minutes → compact human duration: "45 min", "1½ h", "2 h", "3 h 15 min". */
+export function fmtDuration(minutes: bigint | number): string {
+  const m = Number(minutes)
+  if (m < 60) return `${m} min`
+  const h = Math.floor(m / 60)
+  const rem = m % 60
+  if (rem === 0) return `${h} h`
+  if (rem === 30) return `${h}½ h`
+  return `${h} h ${rem} min`
 }

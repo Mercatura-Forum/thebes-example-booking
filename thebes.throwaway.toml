@@ -1,3 +1,5 @@
+# THROWAWAY test manifest — V3 battery only. The repo's thebes.toml stays clean;
+# the live pair is minted at final deploy time.
 [project]
 name = "thebes-example-booking-throwaway"
 default_network = "wan"
