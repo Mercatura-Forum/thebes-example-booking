@@ -7,10 +7,20 @@
  */
 
 let offsetMs: number | null = null
+const listeners = new Set<() => void>()
 
 /** Feed a fresh chain-now (ns) into the calibration. Cheap — call it whenever a view carries one. */
 export function calibrate(chainNowNs: bigint): void {
+  const first = offsetMs === null
   offsetMs = Date.now() - Number(chainNowNs / 1_000_000n)
+  if (first) for (const fn of listeners) fn()
+}
+
+/** Re-render subscribers the moment the first calibration lands (it's async —
+ * anything that converts wall↔chain time on mount must wait for it). */
+export function onCalibrated(fn: () => void): () => void {
+  listeners.add(fn)
+  return () => listeners.delete(fn)
 }
 
 export function isCalibrated(): boolean {

@@ -33,11 +33,11 @@ export function Layout() {
   return (
     <div className="flex min-h-full flex-col">
       <header className="sticky top-0 z-10 border-b border-[var(--color-line)] bg-paper/85 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-5 py-3">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-y-1.5 px-5 py-3">
           <NavLink to="/" className="font-display text-2xl font-extrabold tracking-tight">
             harbor<span className="text-[var(--color-teal)]">~</span>
           </NavLink>
-          <nav className="flex items-center gap-1">
+          <nav className="flex flex-wrap items-center justify-end gap-1">
             {tabs.map((t) => (
               <NavLink key={t.to} to={t.to} end={t.end}
                 className={({ isActive }) => `rounded-lg px-3 py-1.5 text-sm font-semibold transition ${isActive ? 'bg-[var(--color-teal)]/10 text-[var(--color-teal-ink)]' : 'text-ink-soft hover:text-ink'}`}>

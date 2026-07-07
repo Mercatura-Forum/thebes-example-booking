@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { BoardSlot } from '../lib/booking-api'
-import { wallDate } from '../lib/chainTime'
-import { fmtClock } from '../lib/chainTime'
+import { wallDate, fmtClock } from '../lib/chainTime'
+import { useCalibrated } from '../lib/useCalibrated'
 
 /**
  * TideClock — the harbor's emblem: the coming week of REAL availability as a
@@ -37,8 +37,9 @@ export function TideClock({
   const [hit, setHit] = useState<Hit | null>(null)
   const hitRef = useRef<Hit | null>(null)
 
-  // Geometry per slot, recomputed when the board changes: day ring (0..6 from
-  // "today" in the viewer's wall clock) + start/end angles (time of day).
+  // Geometry per slot, recomputed when the board changes — and again when the
+  // chain-clock calibration lands (day rings are meaningless before it).
+  const cal = useCalibrated()
   const arcs = useMemo(() => {
     const today = new Date()
     today.setHours(0, 0, 0, 0)
@@ -56,7 +57,8 @@ export function TideClock({
         return { slot: s, day, a0, a1 }
       })
       .filter((a): a is { slot: BoardSlot; day: number; a0: number; a1: number } => a !== null)
-  }, [board])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [board, cal])
 
   useEffect(() => {
     const el = host.current

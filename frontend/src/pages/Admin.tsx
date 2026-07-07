@@ -9,6 +9,7 @@ import {
 } from '../lib/booking-api'
 import { MEDIA_CID, fmtCents, fmtDuration } from '../lib/config'
 import { toChainNs, fmtClock, fmtSlot, chainNowNs } from '../lib/chainTime'
+import { useCalibrated } from '../lib/useCalibrated'
 import { MediaImage } from '../components/MediaImage'
 import { ListingArt } from '../components/ListingArt'
 import { Button, Spinner, ErrorNote, Price } from '../components/ui'
@@ -64,12 +65,15 @@ type Flash = (fn: () => Promise<unknown>, okNote: string, after?: () => void) =>
 
 function AgendaTab({ flash }: { flash: Flash }) {
   const [day, setDay] = useState(() => new Date().toISOString().slice(0, 10))
+  // The wall→chain conversion is meaningless until the clock calibration
+  // lands, so the range (and the query) re-derive when it does.
+  const cal = useCalibrated()
   const range = useMemo(() => {
     const from = new Date(day + 'T00:00:00')
     const to = new Date(from.getTime() + 86_400_000)
     return rangeArgs(toChainNs(from.getTime()), toChainNs(to.getTime()))
-  }, [day])
-  const agenda = useQuery<AgendaRow[]>(BOOKING_CID, M.agenda, range, decodeAgenda, [day])
+  }, [day, cal])
+  const agenda = useQuery<AgendaRow[]>(BOOKING_CID, M.agenda, range, decodeAgenda, [day, cal])
   const now = chainNowNs()
 
   return (
