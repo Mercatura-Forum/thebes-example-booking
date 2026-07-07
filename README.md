@@ -70,9 +70,9 @@ mops install           # resolves the vendored thebes-lib + the pinned compiler
 
 ## Deploy
 
-`thebes.toml` describes the deploy. It ships with `NODE_A..NODE_D` placeholders for
-the cluster validators — run `thebes-deploy init` to print the current WAN cluster
-endpoints and paste them into the `validators` array.
+`thebes.toml` describes the deploy. It ships with the current WAN cluster
+validator endpoints already filled in — `thebes-deploy init` reprints the current
+set if they ever change.
 
 ### 1. Backend
 
