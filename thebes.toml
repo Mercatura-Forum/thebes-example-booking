@@ -1,5 +1,5 @@
 [project]
-name = "thebes-example-booking"
+name = "thebes-example-booking-throwaway"
 default_network = "wan"
 chain_id = 2026
 
@@ -15,13 +15,13 @@ routing = "smart"
 
 [canisters.booking]
 type = "backend-motoko"
-cid = "auto"
+cid = 11001522932367
 wasm = "build/booking.wasm"
 build = 'cd motoko && mops install >/dev/null 2>&1 && mkdir -p ../build && MOC="$(ls "$HOME/.cache/mops/moc/1.4.1/moc" "$HOME/Library/Caches/mops/moc/1.4.1/moc" 2>/dev/null | head -1)" && "$MOC" $(mops sources) -o ../build/booking.wasm main.mo'
 
 [canisters.web]
 type = "frontend"
-cid = "auto"
+cid = 177129167469535
 wasm = "asset_canister.wasm"
 bundle = "frontend/dist"
 health_check_url = "/index.html"
