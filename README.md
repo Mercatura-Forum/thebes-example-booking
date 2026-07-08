@@ -1,18 +1,29 @@
 # thebes-example-booking
 
-An on-chain booking platform built on [Thebes Protocol](https://github.com/Mercatura-Forum/Thebes-Protocol-):
-a Motoko backend that holds services, slots, and reservations with a
-double-booking guard, and a React frontend served as certified assets. It
-demonstrates the full shape of a Thebes application — passkey sign-in,
-controller-gated admin, paginated reads, and threshold-signed on-chain state —
-in one self-contained example.
+Harbor — an on-chain reservation engine built on
+[Thebes Protocol](https://github.com/Mercatura-Forum/Thebes-Protocol-): a Motoko
+backend that holds listings, seated slots, waitlists and a deposit escrow, and a
+React frontend served as certified assets.
+
+The property this example proves: **a slot can never be booked beyond its
+capacity, and every cent of deposit money is accounted for.** Seats are a
+counting guard (the check and the writes share one synchronous call, so two
+concurrent callers can never both take the last seat); cancellation follows a
+per-listing refund window; full slots take a FIFO waitlist that auto-promotes
+the moment seats free; and a **public invariant oracle**
+(`invariantReportView`) recomputes five laws from raw state on every read —
+capacity, waitlist fairness, escrow conservation
+(collected = held + refunded + forfeited + captured), schedule integrity, and
+index integrity. An empty report is the proof.
+
+Live demo: <https://memphis.mercaturaforum.com/_/raw/177129167469535/index.html>
 
 ## Architecture
 
 ```
 frontend (React + Vite + Tailwind)   →   booking backend (Motoko)
    @thebes/sdk  ── boundary client       mo:thebes-lib ── Admin
-   Memphis passkey gate                  services · slots · reservations
+   Memphis passkey gate                  listings · slots · bookings · waitlists · escrow
 ```
 
 - **frontend/** uses `@thebes/sdk` for the boundary client, typed query/update
@@ -31,17 +42,18 @@ deploy time (see [Deploy](#deploy)).
 
 | Method | Kind | Purpose |
 | --- | --- | --- |
-| `getServices` / `servicesView` | query | Browse bookable services. |
-| `getAvailableSlots` / `availableSlotsView` | query | List open slots for a service. |
-| `seedDemo` | update | Populate demo services and slots (admin). |
-| `addServiceOrTrap` / `setServicePhotoOrTrap` | update | Service management (admin). |
-| `createSlotsOrTrap` | update | Generate slots for a service (admin). |
-| `bookAppointmentOrTrap` | update | Reserve a slot; traps on the double-booking guard so the client never silently ignores an error. |
-| `cancelBooking` | update | Release the caller's reservation. |
-| `getMyBookings` / `myBookingsView` / `getSchedule` | query | Read reservations (caller-scoped or by day range). |
+| `listingsView` / `slotsView` / `boardView` | query | Browse listings, a listing's future slots (with seats and waitlist state), and the whole week's open slots. |
+| `bookOrTrap` | update | Take seats on a slot; traps on the capacity guard (`"Only N seat(s) left"`) so the client never silently ignores an error. |
+| `cancelBookingOrTrap` | update | Cancel; refunds in full before the listing's window closes, forfeits after — then promotes the waitlist. |
+| `joinWaitlistOrTrap` / `leaveWaitlistOrTrap` | update | Queue for a full slot (FIFO, auto-promoted). |
+| `checkInOrTrap` / `markNoShowOrTrap` / `completeOrTrap` | update | Front-desk lifecycle; completing captures the deposit, a no-show forfeits it. |
+| `addListingOrTrap` / `publishSlotsOrTrap` / `closeSlotOrTrap` | update | Owner surface; publishing rejects any batch that would overlap existing slots, closing refunds every active booking in full. |
+| `myBookingsView` / `myWaitlistView` / `agendaView` | query | Caller-scoped bookings and waitlists; the owner's day agenda. |
+| `invariantReportView` / `conservationView` / `statsView` | query | The public oracle, the escrow seal, and program stats. |
 | `claimOwner` / `addAdmin` / `setPaused` | update | Ownership and admin surface (from `thebes-lib`'s `Admin`). |
 
-Prices are stored and returned in integer cents; slot times are nanosecond timestamps.
+Deposits are integer cents; every timestamp is chain nanoseconds (counted from
+genesis — clients calibrate via `timeView`, which returns the chain's now).
 
 ## Toolchain
 
@@ -73,6 +85,12 @@ mops install           # resolves the vendored thebes-lib + the pinned compiler
 `thebes.toml` describes the deploy. It ships with the current WAN cluster
 validator endpoints already filled in — `thebes-deploy init` reprints the current
 set if they ever change.
+
+> **Deploying your own copy?** The committed `cid` values pin the **live catalog
+> deployment** (that's what the demo links serve — only its controller can
+> upgrade it). Before your first deploy, set `cid = "auto"` on each canister:
+> the deploy allocates fresh canisters you control and writes their ids back
+> into the manifest.
 
 ### 1. Backend
 
