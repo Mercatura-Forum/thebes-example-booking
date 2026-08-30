@@ -1,7 +1,7 @@
 # thebes-example-booking
 
 Harbor — an on-chain reservation engine built on
-[Thebes Protocol](https://github.com/Mercatura-Forum/Thebes-Protocol-): a Motoko
+[Thebes Protocol](https://thebesprotocol.com): a Motoko
 backend that holds listings, seated slots, waitlists and a deposit escrow, and a
 React frontend served as certified assets.
 
