@@ -4,11 +4,12 @@ default_network = "wan"
 chain_id = 2026
 
 [networks.wan]
+gateway = "https://memphis.mercaturaforum.com"
 validators = [
-    "http://72.62.235.133:18080",
-    "http://72.62.235.127:18080",
-    "http://72.62.235.134:18080",
-    "http://76.13.140.52:18080",
+    "https://memphis.mercaturaforum.com/deploy-api/v0",
+    "https://memphis.mercaturaforum.com/deploy-api/v1",
+    "https://memphis.mercaturaforum.com/deploy-api/v2",
+    "https://memphis.mercaturaforum.com/deploy-api/v3",
 ]
 boundary = "https://memphis.mercaturaforum.com"
 routing = "smart"

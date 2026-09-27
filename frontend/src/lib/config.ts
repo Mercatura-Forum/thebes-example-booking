@@ -7,10 +7,10 @@ declare global {
 }
 
 export const BOOKING_CID: number =
-  (typeof window !== 'undefined' && window.BOOKING_CID) || 70476292333823
+  (typeof window !== 'undefined' && window.BOOKING_CID) || 11001522932367
 
 export const MEDIA_CID: number =
-  (typeof window !== 'undefined' && window.MEDIA_CID) || 47590379230541
+  (typeof window !== 'undefined' && window.MEDIA_CID) || 176447455326287
 
 /** Format integer cents → grouped 2-decimal string. */
 export function fmtCents(cents: bigint | number): string {
