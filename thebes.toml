@@ -4,14 +4,9 @@ default_network = "wan"
 chain_id = 2026
 
 [networks.wan]
+# One stable public name resolves the whole validator set behind the
+# boundary — never put validator IPs here.
 gateway = "https://memphis.mercaturaforum.com"
-validators = [
-    "https://memphis.mercaturaforum.com/deploy-api/v0",
-    "https://memphis.mercaturaforum.com/deploy-api/v1",
-    "https://memphis.mercaturaforum.com/deploy-api/v2",
-    "https://memphis.mercaturaforum.com/deploy-api/v3",
-]
-boundary = "https://memphis.mercaturaforum.com"
 routing = "smart"
 
 [canisters.booking]
